@@ -39,7 +39,6 @@ const TicTacToe = () => {
       const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
       newBoard[randomIndex] = 'O';
       setBoard(newBoard);
-      setIsXNext(!isXNext);
     }
 
     // Check for winner
