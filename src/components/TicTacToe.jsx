@@ -107,7 +107,7 @@ const TicTacToe = () => {
 
   return (
     <Box p={4}>
-      <Grid templateColumns="repeat(3, 1fr)" gap={2} sx={{ gridAutoRows: '1fr' }}>
+      <Grid templateColumns="repeat(3, 120px)" templateRows="repeat(3, 120px)" gap={2}>
         {board.map((value, index) => (
           <Button key={index} onClick={() => handleClick(index)} p={10} fontSize="2xl">
             {value}
