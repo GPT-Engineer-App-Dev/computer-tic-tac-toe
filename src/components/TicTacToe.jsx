@@ -36,8 +36,8 @@ const TicTacToe = () => {
     // Computer's move
     const emptyIndices = newBoard.map((value, idx) => value === null ? idx : null).filter(v => v !== null);
     if (emptyIndices.length > 0 && !calculateWinner(newBoard)) {
-      const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-      newBoard[randomIndex] = 'O';
+      const bestMove = findBestMove(newBoard);
+      newBoard[bestMove] = 'O';
       setBoard(newBoard);
     }
 
@@ -52,6 +52,54 @@ const TicTacToe = () => {
     }
   };
 
+  const findBestMove = (board) => {
+    const availableMoves = board.map((value, idx) => value === null ? idx : null).filter(v => v !== null);
+    let bestScore = -Infinity;
+    let move;
+    for (let i = 0; i < availableMoves.length; i++) {
+      const index = availableMoves[i];
+      board[index] = 'O';
+      let score = minimax(board, 0, false);
+      board[index] = null;
+      if (score > bestScore) {
+        bestScore = score;
+        move = index;
+      }
+    }
+    return move;
+  };
+
+  const minimax = (board, depth, isMaximizing) => {
+    const winner = calculateWinner(board);
+    if (winner === 'X') return -10;
+    if (winner === 'O') return 10;
+    if (board.every(cell => cell !== null)) return 0;
+
+    if (isMaximizing) {
+      let bestScore = -Infinity;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+          board[i] = 'O';
+          let score = minimax(board, depth + 1, false);
+          board[i] = null;
+          bestScore = Math.max(score, bestScore);
+        }
+      }
+      return bestScore;
+    } else {
+      let bestScore = Infinity;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+          board[i] = 'X';
+          let score = minimax(board, depth + 1, true);
+          board[i] = null;
+          bestScore = Math.min(score, bestScore);
+        }
+      }
+      return bestScore;
+    }
+  };
+
   const handleReset = () => {
     setBoard(Array(9).fill(null));
     setIsXNext(true); // Ensure player starts first after reset
@@ -59,7 +107,7 @@ const TicTacToe = () => {
 
   return (
     <Box p={4}>
-      <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+      <Grid templateColumns="repeat(3, 1fr)" gap={2} sx={{ gridAutoRows: '1fr' }}>
         {board.map((value, index) => (
           <Button key={index} onClick={() => handleClick(index)} p={10} fontSize="2xl">
             {value}
