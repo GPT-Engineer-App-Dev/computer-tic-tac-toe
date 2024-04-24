@@ -29,9 +29,18 @@ const TicTacToe = () => {
   const handleClick = (index) => {
     const newBoard = [...board];
     if (calculateWinner(board) || newBoard[index]) return;
-    newBoard[index] = isXNext ? 'X' : 'O';
+    newBoard[index] = 'X'; // Player's move
     setBoard(newBoard);
     setIsXNext(!isXNext);
+
+    // Computer's move
+    const emptyIndices = newBoard.map((value, idx) => value === null ? idx : null).filter(v => v !== null);
+    if (emptyIndices.length > 0 && !calculateWinner(newBoard)) {
+      const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+      newBoard[randomIndex] = 'O';
+      setBoard(newBoard);
+      setIsXNext(!isXNext);
+    }
 
     // Check for winner
     if (calculateWinner(newBoard)) {
@@ -46,7 +55,7 @@ const TicTacToe = () => {
 
   const handleReset = () => {
     setBoard(Array(9).fill(null));
-    setIsXNext(true);
+    setIsXNext(true); // Ensure player starts first after reset
   };
 
   return (
